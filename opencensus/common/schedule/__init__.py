@@ -81,9 +81,12 @@ class QueueExitEvent(QueueEvent):
 
 
 class Queue(object):
-    def __init__(self, capacity):
+    def __init__(self, capacity, multiprocessing_queue=False):
         self.EXIT_EVENT = QueueExitEvent('EXIT')
-        self._queue = multiprocessing.Queue(maxsize=capacity)
+        if multiprocessing_queue:
+            self._queue = multiprocessing.Queue(maxsize=capacity)
+        else:
+            self._queue = queue.Queue(maxsize=capacity)
 
     def _gets(self, count, timeout):
         start_time = time.time()

@@ -62,7 +62,10 @@ class BaseLogHandler(logging.Handler):
             )
         self._telemetry_processors = []
         self.addFilter(SamplingFilter(self.options.logging_sampling_rate))
-        self._queue = Queue(capacity=self.options.queue_capacity)
+        self._queue = Queue(
+            capacity=self.options.queue_capacity,
+            multiprocessing_queue=self.options.multiprocessing_queue
+        )
         self._worker = Worker(self._queue, self)
         self._worker.start()
         # For redirects
