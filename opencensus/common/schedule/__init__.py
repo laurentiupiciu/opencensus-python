@@ -14,13 +14,14 @@
 
 from six.moves import queue
 import multiprocessing
+import os
 
 import logging
 import threading
 import time
 
 logger = logging.getLogger(__name__)
-
+OPENCENSUS_MULTIPROCESSING_QUEUE = os.getenv('OPENCENSUS_MULTIPROCESSING_QUEUE', False)
 
 class PeriodicTask(threading.Thread):
     """Thread that periodically calls a given function.
@@ -81,9 +82,9 @@ class QueueExitEvent(QueueEvent):
 
 
 class Queue(object):
-    def __init__(self, capacity, multiprocessing_queue=False):
+    def __init__(self, capacity):
         self.EXIT_EVENT = QueueExitEvent('EXIT')
-        if multiprocessing_queue:
+        if OPENCENSUS_MULTIPROCESSING_QUEUE:
             self._queue = multiprocessing.Queue(maxsize=capacity)
         else:
             self._queue = queue.Queue(maxsize=capacity)
